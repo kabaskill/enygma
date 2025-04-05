@@ -3,9 +3,9 @@ import {
   addRotor,
   getAvailableRotors,
 } from "~/store/StateManager";
-import { cn } from "~/utils/cn";
 import ModuleWrapper from "./ModuleWrapper";
 import Rotor from "./Rotor";
+import { cn } from "~/lib/utils";
 
 export default function RotorSection() {
   const canAddRotor = getAvailableRotors().length > 0;

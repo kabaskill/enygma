@@ -1,7 +1,7 @@
 import { KEYBOARD } from "~/data/constants";
 import { activeLamp } from "../../../store/StateManager";
 import ModuleWrapper from "./ModuleWrapper";
-import { cn } from "~/utils/cn";
+import { cn } from "~/lib/utils";
 
 export default function Lampboard() {
   return (

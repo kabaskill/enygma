@@ -6,7 +6,7 @@ import {
 } from "~/store/StateManager";
 import ModuleWrapper from "./ModuleWrapper";
 import { ALPHABET } from "~/data/constants";
-import { cn } from "~/utils/cn";
+import { cn } from "~/lib/utils";
 
 
 export default function Plugboard() {

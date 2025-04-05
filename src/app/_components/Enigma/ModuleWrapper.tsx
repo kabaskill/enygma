@@ -1,7 +1,7 @@
 import { controls } from "~/store/StateManager";
-import { cn } from "~/utils/cn";
 import Controls from "./Controls";
 import type { Modules } from "~/data/types";
+import { cn } from "~/lib/utils";
 
 export default function ModuleWrapper({
   children,

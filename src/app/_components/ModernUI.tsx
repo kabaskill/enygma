@@ -1,7 +1,6 @@
 "use client";
 import { useSignals } from "@preact/signals-react/runtime";
 import { useState } from "react";
-import { cn } from "~/utils/cn";
 import Lampboard from "./Enigma/Lampboard";
 import RotorSection from "./Enigma/RotorSection";
 import Plugboard from "./Enigma/Plugboard";
@@ -19,6 +18,7 @@ import {
   reset,
 } from "../../store/StateManager";
 import Link from "next/link";
+import { cn } from "~/lib/utils";
 
 type ComponentKey = 'home' | 'rotors' | 'plugboard' | 'settings' | 'history' | 'help';
 

@@ -1,6 +1,6 @@
 import { KEYBOARD } from "~/data/constants";
 import { setActiveLamp } from "../../../store/StateManager";
-import { cn } from "~/utils/cn";
+import { cn } from "~/lib/utils";
 
 
 interface KeyboardProps {

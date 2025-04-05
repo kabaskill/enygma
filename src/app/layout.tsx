@@ -20,7 +20,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${courier.variable}`}>
+    <html lang="en" className={`${courier.variable} dark`}>
       <body>
         {children}
       </body>

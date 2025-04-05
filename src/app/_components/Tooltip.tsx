@@ -2,7 +2,7 @@
 import {MessageCircleQuestion} from "lucide-react";
 import {TOOLTIPS} from "~/data/constants";
 import {useState, useRef, useEffect} from "react";
-import {cn} from "~/utils/cn";
+import { cn } from "~/lib/utils";
 
 // Global state to track which tooltip is currently open
 let activeTooltipId: string | null = null;

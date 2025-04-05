@@ -1,7 +1,7 @@
 import {signal} from "@preact/signals-react";
 import type {RotorSetting, UIStyle} from "~/data/types";
 import {ALPHABET, ROTORS} from "~/data/constants";
-import {cipher} from "~/utils/enigmaHelpers";
+import {cipher} from "~/lib/enigmaHelpers";
 
 export const input = signal("");
 export const output = signal("");

@@ -2,8 +2,8 @@ import { ChevronDown } from "lucide-react";
 
 import Tooltip from "../Tooltip";
 import type { Modules } from "~/data/types";
-import { cn } from "~/utils/cn";
 import { controls } from "~/store/StateManager";
+import { cn } from "~/lib/utils";
 
 export default function Controls({ modName }: { modName: Modules }) {
   return (

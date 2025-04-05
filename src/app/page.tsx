@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { cn } from "~/lib/utils";
 
 import { auth } from "~/server/auth";
 
@@ -6,11 +7,17 @@ export default async function Home() {
   const session = await auth();
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
+    <main
+      className={cn(
+        "flex min-h-screen flex-col items-center justify-center",
+        "bg-gradient-to-b from-zinc-800 via-amber-800/20 to-zinc-800 text-amber-100",
+      )}
+    >
       <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16">
         <h1 className="text-5xl font-extrabold tracking-tight sm:text-[5rem]">
           e<span className="text-[hsl(280,100%,70%)]">N</span>ygma
         </h1>
+     
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
           <Link
             className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 hover:bg-white/20"
