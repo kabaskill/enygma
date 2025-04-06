@@ -1,7 +1,7 @@
 import { ChevronDown } from "lucide-react";
 
 import Tooltip from "../Tooltip";
-import type { Modules } from "~/data/types";
+import type { Modules } from "~/lib/types";
 import { controls } from "~/store/StateManager";
 import { cn } from "~/lib/utils";
 

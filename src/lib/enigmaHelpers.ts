@@ -1,30 +1,38 @@
-// enigmaHelpers.ts
-import type { RotorSetting } from "../data/types";
-import * as data from "../data/constants";
+import type { RotorSetting } from "./types";
+import * as data from "./constants";
 
 const { ALPHABET, ROTORS, REFLECTOR } = data;
 
-interface PlugboardPair {
-  from: string;
-  to: string;
-}
-
+/**
+ * Applies the plugboard substitution to a character
+ */
 export function applyPlugboard(
   char: string,
   plugboard: Record<string, string>,
 ): string {
-  // Handle the new Record<string, string> format from StateManager
-
   return plugboard[char] ?? char;
 }
 
+/**
+ * Passes a character through a rotor in either forward or reverse direction
+ */
 export function rotorPass(
   char: string,
   rotor: string,
   ringSetting: number,
   reverse = false,
 ): string {
+  if (!ROTORS[rotor]) {
+    console.error(`Invalid rotor: ${rotor}`);
+    return char;
+  }
+
   let index = ALPHABET.indexOf(char);
+  if (index === -1) {
+    console.error(`Character not in alphabet: ${char}`);
+    return char;
+  }
+
   index = (index + ringSetting + 26) % 26;
 
   if (reverse) {
@@ -37,16 +45,29 @@ export function rotorPass(
   return ALPHABET[index];
 }
 
+/**
+ * Processes a character through the entire Enigma machine
+ */
 export function cipher(
   char: string,
   rotorSettings: RotorSetting[],
-  plugboard: PlugboardPair[],
+  plugboard: Record<string, string>,
 ): string {
+  if (!char || rotorSettings.length === 0) {
+    return char;
+  }
+
   char = char.toUpperCase();
+
+  // Skip non-alphabet characters
+  if (!ALPHABET.includes(char)) {
+    return char;
+  }
+
   char = applyPlugboard(char, plugboard);
 
   // Forward pass through rotors
-  for (let i = 0; i < 3; i++) {
+  for (let i = 0; i < rotorSettings.length; i++) {
     char = rotorPass(
       char,
       rotorSettings[i].rotor,
@@ -55,10 +76,13 @@ export function cipher(
   }
 
   // Reflector
-  char = REFLECTOR[ALPHABET.indexOf(char)];
+  const reflectorIndex = ALPHABET.indexOf(char);
+  if (reflectorIndex !== -1) {
+    char = REFLECTOR[reflectorIndex];
+  }
 
   // Backward pass through rotors
-  for (let i = 2; i >= 0; i--) {
+  for (let i = rotorSettings.length - 1; i >= 0; i--) {
     char = rotorPass(
       char,
       rotorSettings[i].rotor,

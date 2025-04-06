@@ -1,14 +1,14 @@
-'use client'
-import {MessageCircleQuestion} from "lucide-react";
-import {TOOLTIPS} from "~/data/constants";
-import {useState, useRef, useEffect} from "react";
+"use client";
+import { MessageCircleQuestion } from "lucide-react";
+import { TOOLTIPS } from "~/lib/constants";
+import { useState, useRef, useEffect } from "react";
 import { cn } from "~/lib/utils";
 
 // Global state to track which tooltip is currently open
 let activeTooltipId: string | null = null;
 let closeAllTooltips: (() => void) | null = null;
 
-export default function Tooltip({tooltip}: {tooltip: string}) {
+export default function Tooltip({ tooltip }: { tooltip: string }) {
   const tooltipText = TOOLTIPS[tooltip];
   const [isVisible, setIsVisible] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -53,10 +53,10 @@ export default function Tooltip({tooltip}: {tooltip: string}) {
   };
 
   return (
-    <div className="relative ">
+    <div className="relative">
       <button
         ref={buttonRef}
-        className="flex items-center justify-center cursor-pointer p-0"
+        className="flex cursor-pointer items-center justify-center p-0"
         aria-label="Show tooltip"
         onClick={handleClick}
       >
@@ -66,9 +66,9 @@ export default function Tooltip({tooltip}: {tooltip: string}) {
       {isVisible && (
         <div
           className={cn(
-            "absolute top-full left-1/2 -translate-x-1/2 mt-1",
-            "w-3xs bg-white text-gray-800 text-sm py-1.5 px-3",
-            "rounded shadow-md border border-gray-100 z-50 animate-in fade-in duration-200"
+            "absolute top-full left-1/2 mt-1 -translate-x-1/2",
+            "w-3xs bg-white px-3 py-1.5 text-sm text-gray-800",
+            "animate-in fade-in z-50 rounded border border-gray-100 shadow-md duration-200",
           )}
         >
           {tooltipText}

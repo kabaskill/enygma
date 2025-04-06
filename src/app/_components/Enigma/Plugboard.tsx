@@ -5,9 +5,8 @@ import {
   disconnectPlugboardLetter,
 } from "~/store/StateManager";
 import ModuleWrapper from "./ModuleWrapper";
-import { ALPHABET } from "~/data/constants";
+import { ALPHABET } from "~/lib/constants";
 import { cn } from "~/lib/utils";
-
 
 export default function Plugboard() {
   const [selectedLetter, setSelectedLetter] = useState<string | null>(null);

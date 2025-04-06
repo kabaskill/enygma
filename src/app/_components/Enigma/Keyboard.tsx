@@ -1,7 +1,6 @@
-import { KEYBOARD } from "~/data/constants";
+import { KEYBOARD } from "~/lib/constants";
 import { setActiveLamp } from "../../../store/StateManager";
 import { cn } from "~/lib/utils";
-
 
 interface KeyboardProps {
   onButtonPress: (char: string) => void;
@@ -12,7 +11,7 @@ export default function Keyboard({ onButtonPress }: KeyboardProps) {
     <div className="flex flex-col items-center gap-4">
       {Object.keys(KEYBOARD).map((row) => (
         <div key={row} className="flex gap-2">
-          {KEYBOARD[row as keyof typeof KEYBOARD].split("").map((char) => (
+          {KEYBOARD[row].split("").map((char) => (
             <Button key={char} char={char} onButtonPress={onButtonPress} />
           ))}
         </div>

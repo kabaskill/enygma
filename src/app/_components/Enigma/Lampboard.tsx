@@ -1,5 +1,5 @@
-import { KEYBOARD } from "~/data/constants";
-import { activeLamp } from "../../../store/StateManager";
+import { KEYBOARD } from "~/lib/constants";
+import { activeLamp } from "~/store/StateManager";
 import ModuleWrapper from "./ModuleWrapper";
 import { cn } from "~/lib/utils";
 
@@ -9,7 +9,7 @@ export default function Lampboard() {
       <div className="flex flex-col items-center gap-2">
         {Object.keys(KEYBOARD).map((row) => (
           <div key={row} className="flex gap-1.5">
-             {KEYBOARD[row as keyof typeof KEYBOARD].split("").map((char) => (
+            {KEYBOARD[row].split("").map((char) => (
               <div
                 key={char}
                 className={cn(

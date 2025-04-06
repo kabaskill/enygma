@@ -16,7 +16,7 @@ import {
   setInput,
   processChar,
   reset,
-} from "../../store/StateManager";
+} from "~/store/StateManager";
 import Link from "next/link";
 import { cn } from "~/lib/utils";
 
