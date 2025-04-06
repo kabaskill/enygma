@@ -5,7 +5,19 @@ import {
   updateRotor,
   removeRotor,
   getAvailableRotors,
-} from "../../../store/StateManager";
+} from "~/store/StateManager";
+import { Card } from "../ui/card";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 
 interface RotorProps {
   index: number;
@@ -14,11 +26,12 @@ interface RotorProps {
 export default function Rotor({ index }: RotorProps) {
   const currentRotor = rotorSettings.value[index].rotor;
   const availableRotors = getAvailableRotors(currentRotor);
-
   const reverseIndex = rotorSettings.value.length - index - 1;
+  const rotorNumber = index + 1;
 
-  function handleRotorTypeChange(e: React.ChangeEvent<HTMLSelectElement>) {
-    updateRotor(index, e.target.value);
+  // Updated to work with the Select component
+  function handleRotorTypeChange(value: string) {
+    updateRotor(index, value);
   }
 
   function handleRingSettingChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -31,49 +44,70 @@ export default function Rotor({ index }: RotorProps) {
     removeRotor(index);
   }
 
-  const rotorNumber = rotorSettings.value.length - index;
-
   return (
-    <div className="enigma-rotor">
-      <div className="flex w-full items-center justify-between">
-        <p className="enigma-label">Rotor {rotorNumber}</p>
+    <Card className="p-4 shadow-md">
+      <div className="flex items-center justify-between">
+        <h3 className="text-lg font-medium">Rotor {rotorNumber}</h3>
         {rotorSettings.value.length > 1 && (
-          <button
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={handleRemove}
-            className="cursor-pointer text-red-500 hover:text-red-700"
+            className="text-destructive hover:text-destructive/80 cursor-pointer"
             title="Remove rotor"
           >
-            <X size={14} />
-          </button>
+            <X />
+          </Button>
         )}
       </div>
 
-      <select
-        value={currentRotor}
-        onChange={handleRotorTypeChange}
-        className="enigma-input mb-3 w-full py-1 text-center"
-      >
-        <option value={currentRotor}>{currentRotor}</option>
-        {availableRotors
-          .filter((rotor) => rotor !== currentRotor)
-          .map((rotorType) => (
-            <option key={rotorType} value={rotorType}>
-              {rotorType}
-            </option>
-          ))}
-      </select>
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <Label
+            htmlFor={`rotor-type-${index}`}
+            className="text-sm font-medium"
+          >
+            Type
+      
 
-      <div className="flex w-full items-center justify-between">
-        <span className="enigma-label text-xs">Ring:</span>
-        <input
-          type="number"
-          min="0"
-          max="25"
-          value={rotorSettings.value[reverseIndex].ringSetting}
-          onChange={handleRingSettingChange}
-          className="enigma-input py-1 text-center"
-        />
+          <Select value={currentRotor} onValueChange={handleRotorTypeChange}>
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select rotor type" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectItem value={currentRotor}>{currentRotor}</SelectItem>
+                {availableRotors
+                  .filter((rotor) => rotor !== currentRotor)
+                  .map((rotorType) => (
+                    <SelectItem key={rotorType} value={rotorType}>
+                      {rotorType}
+                    </SelectItem>
+                  ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+          </Label>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <Label
+            htmlFor={`ring-setting-${index}`}
+            className="text-sm font-medium"
+          >
+            Ring
+          </Label>
+          <Input
+            id={`ring-setting-${index}`}
+            type="number"
+            min="0"
+            max="25"
+            value={rotorSettings.value[reverseIndex].ringSetting}
+            onChange={handleRingSettingChange}
+            
+          />
+        </div>
       </div>
-    </div>
+    </Card>
   );
 }

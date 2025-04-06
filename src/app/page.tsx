@@ -62,65 +62,73 @@ export default async function Home() {
       {/* Features section */}
       <section className="container px-4 py-16">
         <div className="grid grid-cols-1 place-items-center gap-6 md:grid-cols-2">
-          <Card className="border-zinc-700 bg-zinc-800/50 text-zinc-100">
-            <CardHeader>
-              <div className="flex items-center gap-2">
-                <Layers className="h-5 w-5 text-amber-400" />
-                <CardTitle>Classic Interface</CardTitle>
-              </div>
-              <CardDescription className="text-zinc-400">
-                Experience the historical design
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p>
-                An authentic recreation of the original Enigma machine interface
-                with period-appropriate styling and interactions. Perfect for
-                history enthusiasts.
-              </p>
-            </CardContent>
-            <CardFooter>
-              <Button
-                asChild
-                variant="ghost"
-                className="text-amber-400 hover:bg-zinc-700/70 hover:text-amber-300"
-              >
-                <Link href="/classic">
-                  Explore Classic <ChevronRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
-            </CardFooter>
-          </Card>
+          <Link href="/classic">
+            <Card
+              className={cn(
+                "cursor-pointer border-zinc-700 bg-zinc-800/50 text-zinc-100",
+                "hover:bg-gradient-to-b hover:from-amber-600 hover:to-amber-200",
+                'transition-all duration-500 ease-in-out',
+              )}
+            >
+              <CardHeader>
+                <div className="flex items-center gap-2">
+                  <Layers className="h-5 w-5 text-amber-400" />
+                  <CardTitle>Classic Interface</CardTitle>
+                </div>
+                <CardDescription className="text-zinc-400">
+                  Experience the historical design
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p>
+                  An authentic recreation of the original Enigma machine
+                  interface with period-appropriate styling and interactions.
+                  Perfect for history enthusiasts.
+                </p>
+              </CardContent>
+              <CardFooter>
+                <Button
+                  asChild
+                  variant="ghost"
+                  className="text-amber-400 hover:bg-zinc-700/70 hover:text-amber-300"
+                ></Button>
+              </CardFooter>
+            </Card>
+          </Link>
 
-          <Card className="border-zinc-700 bg-zinc-800/50 text-zinc-100">
-            <CardHeader>
-              <div className="flex items-center gap-2">
-                <Sparkles className="h-5 w-5 text-purple-400" />
-                <CardTitle>Modern Interface</CardTitle>
-              </div>
-              <CardDescription className="text-zinc-400">
-                A contemporary approach
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p>
-                A sleek, intuitive redesign of the Enigma machine with modern UI
-                principles. Features responsive design and enhanced
-                visualization of the encryption process.
-              </p>
-            </CardContent>
-            <CardFooter>
-              <Button
-                asChild
-                variant="ghost"
-                className="text-purple-400 hover:bg-zinc-700/70 hover:text-purple-300"
-              >
-                <Link href="/modern">
-                  Explore Modern <ChevronRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
-            </CardFooter>
-          </Card>
+          <Link href="/modern">
+            <Card
+              className={cn(
+                "border-zinc-700 bg-zinc-800/50 text-zinc-100",
+                "hover:bg-gradient-to-b hover:from-purple-600 hover:to-purple-200",
+                'transition-all duration-500 ease-in-out',
+              )}
+            >
+              <CardHeader>
+                <div className="flex items-center gap-2">
+                  <Sparkles className="h-5 w-5 text-purple-400" />
+                  <CardTitle>Modern Interface</CardTitle>
+                </div>
+                <CardDescription className="text-zinc-400">
+                  A contemporary approach
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p>
+                  A sleek, intuitive redesign of the Enigma machine with modern
+                  UI principles. Features responsive design and enhanced
+                  visualization of the encryption process.
+                </p>
+              </CardContent>
+              <CardFooter>
+                <Button
+                  asChild
+                  variant="ghost"
+                  className="text-purple-400 hover:bg-zinc-700/70 hover:text-purple-300"
+                ></Button>
+              </CardFooter>
+            </Card>
+          </Link>
         </div>
       </section>
 

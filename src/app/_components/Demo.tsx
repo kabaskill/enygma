@@ -1,6 +1,8 @@
 "use client";
 import { useState } from "react";
 import { Textarea } from "./ui/textarea";
+import { cipher } from "~/lib/enigmaHelpers";
+import { plugboardMapping, rotorSettings } from "~/store/StateManager";
 
 export default function Demo() {
   const [input, setInput] = useState<string>("");
@@ -10,11 +12,27 @@ export default function Demo() {
     const value = event.target.value;
     setInput(value);
 
-    
+    // Process each character through the Enigma machine
+    const processedOutput = value.split('')
+      .map(char => {
+        if (!char || !char.trim()) return ' ';
+        
+        // Get current settings from the state
+        const currentRotorSettings = rotorSettings.value;
+        const currentPlugboard = plugboardMapping.value;
+        
+        // Apply the cipher without updating state
+        return cipher(
+          char,
+          currentRotorSettings,
+          currentPlugboard
+        );
+      })
+      .join('');
 
     // Simulate a processing delay
     setTimeout(() => {
-      setOutput(value);
+      setOutput(processedOutput);
     }, 1000);
   }
 
@@ -23,8 +41,8 @@ export default function Demo() {
       <h3 className="text-4xl font-bold">Test it out!</h3>
 
       <div className="grid w-full max-w-6xl grid-cols-2 gap-8">
-        <Textarea placeholder="Input" value={input} onChange={handleChange} />
-        <Textarea placeholder="Output" value={output} />
+        <Textarea placeholder="Input" defaultValue={input} onChange={handleChange} />
+        <Textarea placeholder="Output" defaultValue={output} />
       </div>
     </div>
   );

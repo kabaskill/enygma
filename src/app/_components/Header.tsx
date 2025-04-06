@@ -1,4 +1,3 @@
-import Tooltip from "./Tooltip";
 
 export default function Header() {
   return (
@@ -7,7 +6,7 @@ export default function Header() {
         <span className="relative z-10">ENIGMA</span> 
         <div className="absolute inset-0 bg-zinc-600 blur-sm transform -skew-y-1 z-0"></div>
       </h1>
-      <Tooltip tooltip="header"/>
+      {/* <Tooltip tooltip="header"/> */}
     </header>
   );
 }

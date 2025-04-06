@@ -44,7 +44,7 @@ export default function EnigmaComponent() {
   return (
     <section className="grid grid-cols-1 gap-6 lg:grid-cols-3">
       {/* Left column */}
-      <div className="enigma-panel lg:col-span-2">
+      <div className=" lg:col-span-2">
         <div className="flex flex-col items-center">
           <div className="mx-auto w-full max-w-3xl space-y-4">
             <RotorSection />
