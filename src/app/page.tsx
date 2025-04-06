@@ -173,7 +173,7 @@ export default async function Home() {
           )}
           <div className="mt-8 text-center">
             <Link
-              href="https://github.com/your-username/enygma"
+              href="https://github.com/kabaskill/enygma"
               className="inline-flex items-center gap-2 text-zinc-400 hover:text-white"
             >
               <Github className="h-4 w-4" />
