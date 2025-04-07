@@ -17,13 +17,15 @@ import {
 import RotorSection from "../_components/Enigma/RotorSection";
 import Plugboard from "../_components/Enigma/Plugboard";
 import { useSignals } from "@preact/signals-react/runtime";
-import EditorWrapper from "../_components/Enigma/Editor/EditorWrapper";
+import SlateEditor from "../_components/Enigma/Editor/SlateEditor";
+import ModuleWrapper from "../_components/Enigma/ModuleWrapper";
+import Lampboard from "../_components/Enigma/Lampboard";
 
 export default function Modern() {
   useSignals();
 
   return (
-    <SidebarProvider>
+    <SidebarProvider className="">
       <AppSidebar />
       <SidebarInset className="flex max-h-screen flex-col overflow-auto">
         <header className="flex h-16 shrink-0 items-center gap-2">
@@ -52,9 +54,12 @@ export default function Modern() {
         <div className="mb-4 grid grid-cols-2 gap-6 px-4">
           <RotorSection />
           <Plugboard />
+          <Lampboard/>
         </div>
 
-        <EditorWrapper />
+        <ModuleWrapper modName="input" className="mx-4">
+          <SlateEditor />
+        </ModuleWrapper>
       </SidebarInset>
     </SidebarProvider>
   );
