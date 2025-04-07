@@ -12,48 +12,20 @@ export default async function Home() {
   const session = await auth();
 
   return (
-    <main
-      className={cn(
-        "min-h-screen bg-gradient-to-b from-zinc-900 via-zinc-800/90 to-zinc-900",
-        "flex flex-col items-center",
-      )}
-    >
+    <main className={cn("min-h-screen", "flex flex-col items-center")}>
       {/* Hero section */}
       <section className="container px-4 pt-20 pb-12 md:pt-32 md:pb-24">
         <div className="flex flex-col items-center space-y-4 text-center">
           <div className="mb-2 flex items-center gap-2">
-            <Sparkles className="h-8 w-8 text-amber-400" />
-            <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-7xl">
+            <h1 className="text-5xl font-extrabold tracking-tight sm:text-7xl">
               e<span className="text-[hsl(280,100%,70%)]">N</span>ygma
             </h1>
           </div>
-          <p className="max-w-[42rem] text-lg text-zinc-400 md:text-xl">
+          <p className="max-w-[42rem] md:text-xl">
             A modern Enigma machine simulator with classic and modern
             interfaces. Experience encryption from the past with today's
             technology.
           </p>
-          <div className="mt-8 flex flex-col gap-4 sm:flex-row">
-            <Button
-              asChild
-              size="lg"
-              variant="default"
-              className="bg-amber-600 hover:bg-amber-700"
-            >
-              <Link href="/modern">
-                Try Modern UI <ChevronRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
-            <Button
-              asChild
-              size="lg"
-              variant="outline"
-              className="border-zinc-700 text-zinc-300 hover:bg-zinc-800"
-            >
-              <Link href="/classic">
-                Try Classic UI <ChevronRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
-          </div>
         </div>
       </section>
 
@@ -65,9 +37,8 @@ export default async function Home() {
           <Link href="/classic">
             <Card
               className={cn(
-                "cursor-pointer border-zinc-700 bg-zinc-800/50 text-zinc-100",
                 "hover:bg-gradient-to-b hover:from-amber-600 hover:to-amber-200",
-                'transition-all duration-500 ease-in-out',
+                "transition-all duration-500 ease-in-out",
               )}
             >
               <CardHeader>
@@ -86,22 +57,14 @@ export default async function Home() {
                   Perfect for history enthusiasts.
                 </p>
               </CardContent>
-              <CardFooter>
-                <Button
-                  asChild
-                  variant="ghost"
-                  className="text-amber-400 hover:bg-zinc-700/70 hover:text-amber-300"
-                ></Button>
-              </CardFooter>
             </Card>
           </Link>
 
           <Link href="/modern">
             <Card
               className={cn(
-                "border-zinc-700 bg-zinc-800/50 text-zinc-100",
                 "hover:bg-gradient-to-b hover:from-purple-600 hover:to-purple-200",
-                'transition-all duration-500 ease-in-out',
+                "transition-all duration-500 ease-in-out",
               )}
             >
               <CardHeader>
@@ -120,13 +83,6 @@ export default async function Home() {
                   visualization of the encryption process.
                 </p>
               </CardContent>
-              <CardFooter>
-                <Button
-                  asChild
-                  variant="ghost"
-                  className="text-purple-400 hover:bg-zinc-700/70 hover:text-purple-300"
-                ></Button>
-              </CardFooter>
             </Card>
           </Link>
         </div>
@@ -134,16 +90,14 @@ export default async function Home() {
 
       {/* Demo section */}
       <section className="container flex flex-col items-center px-4 py-16">
-        <div className="w-full max-w-2xl">
-          <h2 className="mb-8 text-center text-2xl font-bold text-white">
-            Interactive Demo
-          </h2>
-          <Card className="border-zinc-700 bg-zinc-800/50">
-            <CardContent className="pt-6">
-              <Demo />
-            </CardContent>
-          </Card>
-        </div>
+        <h2 className="mb-8 text-center text-2xl font-bold">
+          Interactive Demo
+        </h2>
+        <Card >
+          <CardContent >
+            <Demo />
+          </CardContent>
+        </Card>
       </section>
 
       {/* Auth section */}
@@ -151,17 +105,15 @@ export default async function Home() {
         <div className="flex flex-col items-center justify-center gap-4">
           {session ? (
             <div className="flex flex-col items-center gap-2 text-center">
-              <p className="text-zinc-300">
+              <p>
                 Logged in as{" "}
-                <span className="font-medium text-white">
-                  {session.user?.name}
-                </span>
+                <span className="font-medium">{session.user?.name}</span>
               </p>
               <Button
                 asChild
                 variant="outline"
                 size="sm"
-                className="border-zinc-700 text-zinc-300 hover:bg-zinc-800"
+                className="border-zinc-700 hover:bg-zinc-800"
               >
                 <Link href="/api/auth/signout">
                   <LogOut className="mr-2 h-4 w-4" /> Sign out
@@ -172,7 +124,7 @@ export default async function Home() {
             <Button
               asChild
               variant="outline"
-              className="border-zinc-700 text-zinc-300 hover:bg-zinc-800"
+              className="border-zinc-700 hover:bg-zinc-800"
             >
               <Link href="/api/auth/signin">
                 <LogIn className="mr-2 h-4 w-4" /> Sign in
@@ -182,7 +134,7 @@ export default async function Home() {
           <div className="mt-8 text-center">
             <Link
               href="https://github.com/kabaskill/enygma"
-              className="inline-flex items-center gap-2 text-zinc-400 hover:text-white"
+              className="inline-flex items-center gap-2"
             >
               <Github className="h-4 w-4" />
               <span>GitHub Repository</span>

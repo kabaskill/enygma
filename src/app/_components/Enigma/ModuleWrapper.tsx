@@ -1,15 +1,8 @@
 import { controls, updateControls } from "~/store/StateManager";
 import type { Modules } from "~/lib/types";
 import { cn } from "~/lib/utils";
-import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "../ui/card"; //prettier-ignore
-import {
-  BookOpen,
-  BookOpenCheck,
-  ChevronDown,
-  Layers,
-  MessageCircleQuestion,
-  MessageCircleQuestionIcon,
-} from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle} from "../ui/card"; //prettier-ignore
+import { ChevronDown, MessageCircleQuestion } from "lucide-react";
 import { Button } from "../ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { TOOLTIPS } from "~/lib/constants";
@@ -18,15 +11,17 @@ import { TooltipProvider } from "@radix-ui/react-tooltip";
 export default function ModuleWrapper({
   children,
   modName,
+  className="",
 }: {
   children: React.ReactNode;
   modName: Modules;
+  className?: string;
 }) {
   const headerText = modName.charAt(0).toUpperCase() + modName.slice(1);
   const tooltipText = TOOLTIPS[modName];
 
   return (
-    <Card>
+    <Card className={className}>
       <CardHeader className="inline-flex items-center">
         <CardTitle>{headerText}</CardTitle>
         
