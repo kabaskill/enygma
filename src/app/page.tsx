@@ -7,12 +7,14 @@ import { Button } from "./_components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./_components/ui/card"; //prettier-ignore
 import { Sparkles, Layers, LogIn, LogOut, Github, ChevronRight } from "lucide-react"; //prettier-ignore
 import { Separator } from "./_components/ui/separator";
+import { ThemeToggle } from "./_components/ThemeToggle";
 
 export default async function Home() {
   const session = await auth();
 
   return (
     <main className={cn("min-h-screen", "flex flex-col items-center")}>
+      <ThemeToggle />
       {/* Hero section */}
       <section className="container px-4 pt-20 pb-12 md:pt-32 md:pb-24">
         <div className="flex flex-col items-center space-y-4 text-center">
@@ -93,8 +95,8 @@ export default async function Home() {
         <h2 className="mb-8 text-center text-2xl font-bold">
           Interactive Demo
         </h2>
-        <Card >
-          <CardContent >
+        <Card>
+          <CardContent>
             <Demo />
           </CardContent>
         </Card>

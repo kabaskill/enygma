@@ -20,16 +20,17 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html
-      lang="en"
-      className={`${geist.variable} dark`}
-      suppressHydrationWarning
-    >
+    <html lang="en" className={`${geist.variable}`} suppressHydrationWarning>
       <body>
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
-          enableSystem
+          defaultTheme="dracula"
+          enableSystem={false}
+          value={{
+            light: "light",
+            dark: "dark",
+            dracula: "dracula",
+          }}
           disableTransitionOnChange
         >
           {children}

@@ -4,7 +4,8 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  --font-sans: var(--font-geist), ui-sans-serif, system-ui, sans-serif,
+  --font-sans:
+    var(--font-geist), ui-sans-serif, system-ui, sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
 
@@ -15,7 +16,7 @@
   body {
     @apply bg-background text-foreground;
   }
-  
+
   html {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -103,6 +104,52 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.552 0.016 285.938);
+}
+
+.dracula {
+  /* Dracula color palette base values */
+  --background: oklch(0.258 0.039 301.33); /* Dracula Background */
+  --foreground: oklch(0.964 0.009 104.96); /* Dracula Foreground */
+  
+  /* UI Component colors using Dracula palette */
+  --card: oklch(0.351 0.035 295.27); /* Based on Current Line */
+  --card-foreground: oklch(0.964 0.009 104.96); /* Foreground */
+  --popover: oklch(0.351 0.035 295.27); /* Based on Current Line */
+  --popover-foreground: oklch(0.964 0.009 104.96); /* Foreground */
+  
+  --primary: oklch(0.741 0.234 341.95); /* Pink */
+  --primary-foreground: oklch(0.258 0.039 301.33); /* Background */
+  
+  --secondary: oklch(0.503 0.105 278.17); /* Comment */
+  --secondary-foreground: oklch(0.964 0.009 104.96); /* Foreground */
+  
+  --muted: oklch(0.351 0.035 295.27); /* Current Line */
+  --muted-foreground: oklch(0.702 0.165 296.04); /* Purple */
+  
+  --accent: oklch(0.702 0.165 296.04); /* Purple */
+  --accent-foreground: oklch(0.964 0.009 104.96); /* Foreground */
+  
+  --destructive: oklch(0.675 0.234 27.76); /* Red */
+  --border: oklch(0.503 0.105 278.17); /* Comment */
+  --input: oklch(0.351 0.035 295.27); /* Current Line */
+  --ring: oklch(0.741 0.234 341.95); /* Pink */
+  
+  /* Chart colors */
+  --chart-1: oklch(0.702 0.165 296.04); /* Purple */
+  --chart-2: oklch(0.913 0.176 206.63); /* Cyan */
+  --chart-3: oklch(0.847 0.193 141.23); /* Green */
+  --chart-4: oklch(0.921 0.186 104.84); /* Yellow */
+  --chart-5: oklch(0.81 0.168 68.49); /* Orange */
+  
+  /* Sidebar colors */
+  --sidebar: oklch(0.351 0.035 295.27); /* Current Line */
+  --sidebar-foreground: oklch(0.964 0.009 104.96); /* Foreground */
+  --sidebar-primary: oklch(0.741 0.234 341.95); /* Pink */
+  --sidebar-primary-foreground: oklch(0.258 0.039 301.33); /* Background */
+  --sidebar-accent: oklch(0.702 0.165 296.04); /* Purple */
+  --sidebar-accent-foreground: oklch(0.964 0.009 104.96); /* Foreground */
+  --sidebar-border: oklch(0.503 0.105 278.17); /* Comment */
+  --sidebar-ring: oklch(0.741 0.234 341.95); /* Pink */
 }
 
 @theme inline {
