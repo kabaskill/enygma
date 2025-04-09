@@ -1,7 +1,9 @@
 export interface RotorSetting {
-  rotor: string;
+  rotor: Rotor;
   ringSetting: number;
 }
+
+export type Rotor = "I" | "II" | "III" | "IV" | "V";
 
 export interface Control {
   show: boolean;
