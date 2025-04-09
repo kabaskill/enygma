@@ -1,11 +1,21 @@
 import Link from "next/link";
 import { Button } from "./ui/button";
 import { Github, LogIn, LogOut } from "lucide-react";
-import { auth } from "~/server/auth";
+
 import { cn } from "~/lib/utils";
+import { createClient } from "~/utils/supabase/server";
+import SignOutButton from "./SignOut";
+
 
 export default async function Hero() {
-  const session = await auth();
+  const supabase = await createClient();
+  const { data: { session } } = await supabase.auth.getSession()
+  
+  let verifiedUser = null;
+  if (session) {
+    const { data: { user } } = await supabase.auth.getUser();
+    verifiedUser = user;
+  }
 
   return (
     <>
@@ -46,11 +56,11 @@ export default async function Hero() {
 
           {/* AUTH SECTION */}
           <div className="flex flex-col items-center justify-center gap-4">
-            {session ? (
+            {verifiedUser ? (
               <div className="flex flex-col items-center gap-2 text-center">
                 <p>
                   Logged in as{" "}
-                  <span className="font-medium">{session.user?.name}</span>
+                  <span className="font-medium">{verifiedUser.email}</span>
                 </p>
                 <Button
                   asChild
@@ -62,6 +72,8 @@ export default async function Hero() {
                     <LogOut className="mr-2 h-4 w-4" /> Sign out
                   </Link>
                 </Button>
+
+                <SignOutButton/>
               </div>
             ) : (
               <Button
@@ -69,7 +81,7 @@ export default async function Hero() {
                 variant="outline"
                 className="border-zinc-700 hover:bg-zinc-800"
               >
-                <Link href="/api/auth/signin">
+                <Link href="/login">
                   <LogIn className="mr-2 h-4 w-4" /> Sign in
                 </Link>
               </Button>

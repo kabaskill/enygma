@@ -4,6 +4,7 @@ import { type Metadata } from "next";
 import { Courier_Prime } from "next/font/google";
 import { Geist } from "next/font/google";
 import { ThemeProvider } from "./_components/Providers";
+import { AuthProvider } from "./_components/AuthContext";
 
 export const metadata: Metadata = {
   title: "eNygma",
@@ -22,19 +23,21 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${geist.variable}`} suppressHydrationWarning>
       <body>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="dracula"
-          enableSystem={false}
-          value={{
-            light: "light",
-            dark: "dark",
-            dracula: "dracula",
-          }}
-          disableTransitionOnChange
-        >
-          {children}
-        </ThemeProvider>
+        <AuthProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="dracula"
+            enableSystem={false}
+            value={{
+              light: "light",
+              dark: "dark",
+              dracula: "dracula",
+            }}
+            disableTransitionOnChange
+          >
+            {children}
+          </ThemeProvider>
+        </AuthProvider>
       </body>
     </html>
   );
