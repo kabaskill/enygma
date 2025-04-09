@@ -1,7 +1,7 @@
 // Re-export everything from the individual state files
 
 // Constants and core state
-export { constants, createDefaultPlugboardMapping, STATE_VERSION } from "./constants";
+export { constants, STATE_VERSION } from "./constants";
 export { enigmaState, updateState, initialState } from "./core";
 
 // Logic

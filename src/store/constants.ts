@@ -6,7 +6,7 @@ export const constants = {
     row3: "PYXCVBNML",
   },
   DIGITS: "1234567890",
-  SPECIAL_CHARACTERS: "!@#$%^&*(){}[]=<>/,.",
+  SPECIAL_CHARACTERS: "!@#$%^&*(){}[]=<>/,.;:\"'`~_-+\\|€£¥§©®",
   ROTORS: {
     I: "EKMFLGDQVZNTOWYHXUSPAIBRCJ",
     II: "AJDKSIRUXBLHWTMCQGZNPYFVOE",
@@ -33,14 +33,4 @@ export const constants = {
   },
 };
 
-// Create default plugboard mapping
-export const createDefaultPlugboardMapping = (): Record<string, string> => {
-  const mapping: Record<string, string> = {};
-  constants.ALPHABET.split("").forEach((letter) => {
-    mapping[letter] = letter;
-  });
-  return mapping;
-};
-
-// Current state version
 export const STATE_VERSION = 1;
