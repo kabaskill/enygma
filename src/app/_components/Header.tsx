@@ -1,12 +1,25 @@
+import { ThemeToggle } from "./ThemeToggle";
 
 export default function Header() {
   return (
-    <header className="text-center py-8 flex gap-4 justify-center">
-      <h1 className="text-5xl font-bold tracking-widest text-amber-300 relative inline-block">
-        <span className="relative z-10">ENIGMA</span> 
-        <div className="absolute inset-0 bg-zinc-600 blur-sm transform -skew-y-1 z-0"></div>
-      </h1>
-      {/* <Tooltip tooltip="header"/> */}
+    <header className="bg-input fixed top-0 z-50 w-full">
+      <div className="container mx-auto flex max-w-6xl items-center justify-between">
+        <h1 className="text-2xl font-extrabold tracking-tight ">
+          e<span className="text-[hsl(280,100%,70%)]">N</span>ygma
+        </h1>
+
+        <nav>
+          <ul className="flex gap-4 p-4">
+            <li>home</li>
+            <li>about</li>
+            <li>contact</li>
+            <li>projects </li>
+            <li>maps</li>
+          </ul>
+        </nav>
+
+        <ThemeToggle />
+      </div>
     </header>
   );
 }

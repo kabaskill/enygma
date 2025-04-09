@@ -38,9 +38,8 @@ export default function Demo() {
 
   return (
     <div className="flex w-full flex-col gap-8 px-4 py-16 text-center">
-      <h3 className="text-4xl font-bold">Test it out!</h3>
 
-      <div className="grid w-full max-w-6xl grid-cols-2 gap-8">
+      <div className="grid md:grid-cols-2 gap-8">
         <Textarea placeholder="Input" defaultValue={input} onChange={handleChange} />
         <Textarea placeholder="Output" defaultValue={output} />
       </div>
