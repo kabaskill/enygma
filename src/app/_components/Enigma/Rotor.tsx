@@ -1,4 +1,5 @@
 import { X } from "lucide-react";
+import type { Rotor as RotorType } from "~/lib/types";
 import {
   rotorSettings,
   setRotorSettings,
@@ -31,7 +32,7 @@ export default function Rotor({ index }: RotorProps) {
 
   // Updated to work with the Select component
   function handleRotorTypeChange(value: string) {
-    updateRotor(index, value);
+    updateRotor(index, value as RotorType);
   }
 
   function handleRingSettingChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -68,25 +69,23 @@ export default function Rotor({ index }: RotorProps) {
             className="text-sm font-medium"
           >
             Type
-      
-
-          <Select value={currentRotor} onValueChange={handleRotorTypeChange}>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select rotor type" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectItem value={currentRotor}>{currentRotor}</SelectItem>
-                {availableRotors
-                  .filter((rotor) => rotor !== currentRotor)
-                  .map((rotorType) => (
-                    <SelectItem key={rotorType} value={rotorType}>
-                      {rotorType}
-                    </SelectItem>
-                  ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
+            <Select value={currentRotor} onValueChange={handleRotorTypeChange}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select rotor type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectItem value={currentRotor}>{currentRotor}</SelectItem>
+                  {availableRotors
+                    .filter((rotor) => rotor !== currentRotor)
+                    .map((rotorType) => (
+                      <SelectItem key={rotorType} value={rotorType}>
+                        {rotorType}
+                      </SelectItem>
+                    ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
           </Label>
         </div>
 
@@ -104,7 +103,6 @@ export default function Rotor({ index }: RotorProps) {
             max="25"
             value={rotorSettings.value[reverseIndex].ringSetting}
             onChange={handleRingSettingChange}
-            
           />
         </div>
       </div>

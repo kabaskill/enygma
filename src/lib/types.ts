@@ -1,32 +1,73 @@
+export type ModuleType =
+  | "rotors"
+  | "plugboard"
+  | "reflector"
+  | "shifter"
+  | "substitution"
+  | "vigenere"
+  | "transposition";
+
+export interface BaseModuleConfig {
+  id: string;
+  type: ModuleType;
+  enabled: boolean;
+}
+
+export interface RotorModuleConfig extends BaseModuleConfig {
+  type: "rotors";
+  rotorSettings: RotorSetting[];
+}
+
+export interface PlugboardModuleConfig extends BaseModuleConfig {
+  type: "plugboard";
+  mapping: Record<string, string>;
+}
+
+export interface ReflectorModuleConfig extends BaseModuleConfig {
+  type: "reflector";
+  reflectorType: string; // Could be an enum of different reflector wirings
+}
+
+export interface ShifterModuleConfig extends BaseModuleConfig {
+  type: "shifter";
+  shift: number;
+}
+
+export interface SubstitutionModuleConfig extends BaseModuleConfig {
+  type: "substitution";
+  mapping: Record<string, string>;
+}
+
+export interface VigenereModuleConfig extends BaseModuleConfig {
+  type: "vigenere";
+  keyword: string;
+}
+
+export interface TranspositionModuleConfig extends BaseModuleConfig {
+  type: "transposition";
+  pattern: number[];
+}
+
+export type ModuleConfig =
+  | RotorModuleConfig
+  | PlugboardModuleConfig
+  | ReflectorModuleConfig
+  | ShifterModuleConfig
+  | SubstitutionModuleConfig
+  | VigenereModuleConfig
+  | TranspositionModuleConfig;
+
 export interface RotorSetting {
   rotor: Rotor;
   ringSetting: number;
 }
 
 export type Rotor = "I" | "II" | "III" | "IV" | "V";
+export type UIStyle = "classic" | "modern";
 
 export interface Control {
   show: boolean;
   active: boolean;
-}
-
-export interface Controls {
-  rotors: Control;
-  reflector: Control; 
-  plugboard: Control;
-  lampboard: Control;
-  keyboard: Control;
-  input: Control;
-  output: Control;
-}
-
-export type Modules = "rotors" | "reflector" | "plugboard" | "lampboard" | "keyboard" | "input" | "output";
-
-export type UIStyle = "modern" | "classic";
-
-export interface MachineState {
-  rotorSettings: RotorSetting[];
-  plugboardMapping: Record<string, string>;
 }
 
 export interface MessagesState {
@@ -37,19 +78,21 @@ export interface MessagesState {
 export interface UIState {
   activeLamp: string | null;
   uiStyle: UIStyle;
-  controls: Controls;
 }
 
-export interface EnigmaState {
-  machine: MachineState;
+// Main state interface
+export interface CipherState {
+  activePreset: string;
+  presets: Record<string, ModuleConfig[]>;
+  moduleChain: ModuleConfig[];
   messages: MessagesState;
   ui: UIState;
-  version?: number; 
+  version?: number;
 }
 
 // Configuration export/import
 export interface SavedConfiguration {
   name: string;
   timestamp: number;
-  state: EnigmaState;
+  state: CipherState;
 }

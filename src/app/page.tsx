@@ -1,36 +1,57 @@
+"use client";
+
 import { Card, CardContent, CardHeader, CardTitle } from "./_components/ui/card"; //prettier-ignore
-import { cn } from "~/lib/utils";
 import Demo from "./_components/Demo";
 import Footer from "./_components/Footer";
-import { Separator } from "./_components/ui/separator";
-import Hero from "./_components/Hero";
 import Header from "./_components/Header";
+import Hero from "./_components/Hero";
+import LetterGlitch from "./_components/LetterGlitch";
 
-export default async function Home() {
+export default function Home() {
+
   return (
     <>
+      <div className="pointer-events-none fixed top-0 left-0 -z-10 h-full w-full opacity-20">
+        <LetterGlitch
+          glitchColors={["#2b4539", "#61dca3", "#61b3dc"]}
+          glitchSpeed={100}
+          centerVignette={true}
+          outerVignette={true}
+          smooth={true}
+        />
+      </div>
+
       <Header />
 
-      <main className={cn("min-h-screen", "flex flex-col items-center")}>
-        <Hero />
+      <main >
+        {/* Hero Section */}
+        <section className="container mx-auto flex min-h-screen w-full flex-col items-center justify-center">
+          <Hero />
+        </section>
 
-        <Separator className="bg-secondary" />
+        {/* Demo Section */}
+        <section className="container mx-auto flex min-h-screen w-full flex-col items-center justify-center">
+          <Demo />
+        </section>
 
-        {/* Demo section */}
-        <Card className="container my-24 w-full max-w-4xl">
-          <CardHeader>
-            <CardTitle className="text-center">
-              <h2 className="text-3xl">Test it out!</h2>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Demo />
-          </CardContent>
-        </Card>
+        {/* About Section */}
+        <section className="container mx-auto flex min-h-screen w-full flex-col items-center justify-between">
+         
+            <Card className="w-full ">
+              <CardHeader>
+                <CardTitle>About</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground text-sm">
+                  This is a demo application showcasing the use of Next.js,
+                  Tailwind CSS, and Radix UI.
+                </p>
+              </CardContent>
+            </Card>
+  
 
-        <Separator className="bg-secondary" />
-
-        <Footer />
+          <Footer />
+        </section>
       </main>
     </>
   );

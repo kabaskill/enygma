@@ -1,6 +1,5 @@
-import type { EnigmaState, SavedConfiguration } from "~/lib/types";
-import { enigmaState } from "./core";
-import { initialState } from "./core";
+import type { CipherState, SavedConfiguration } from "~/lib/types";
+import { cipherState, updateState, initialState } from "./core";
 import { STATE_VERSION } from "./constants";
 
 // Persistence functions
@@ -8,14 +7,13 @@ export const persistenceState = {
   // Save state to localStorage
   saveState(name: string): void {
     try {
-      const config: SavedConfiguration = {
-        name,
-        timestamp: Date.now(),
-        state: enigmaState.value,
-      };
-
-      const serializedState = JSON.stringify(config);
-      localStorage.setItem(`enigma_state_${name}`, serializedState);
+      localStorage.setItem(
+        `cipher_state_${name}`,
+        JSON.stringify({
+          state: cipherState.value,
+          version: STATE_VERSION,
+        }),
+      );
     } catch (error) {
       console.error("Failed to save state:", error);
     }
@@ -24,17 +22,16 @@ export const persistenceState = {
   // Load state from localStorage
   loadState(name: string): boolean {
     try {
-      const savedState = localStorage.getItem(`enigma_state_${name}`);
-      if (!savedState) return false;
+      const storedState = localStorage.getItem(`cipher_state_${name}`);
+      if (!storedState) return false;
 
-      const config: SavedConfiguration = JSON.parse(savedState);
+      const parsed = JSON.parse(storedState);
+      const migratedState = this.migrateState(parsed.state);
 
-      // Handle version migrations if needed
-      if (!config.state.version || config.state.version < STATE_VERSION) {
-        config.state = persistenceState.migrateState(config.state);
-      }
+      updateState((state) => {
+        Object.assign(state, migratedState);
+      });
 
-      enigmaState.value = config.state;
       return true;
     } catch (error) {
       console.error("Failed to load state:", error);
@@ -43,7 +40,7 @@ export const persistenceState = {
   },
 
   // Migrate older state versions to current version
-  migrateState(oldState: EnigmaState): EnigmaState {
+  migrateState(oldState: CipherState): CipherState {
     const version = oldState.version || 0;
 
     // Clone the state to avoid mutations
@@ -55,13 +52,13 @@ export const persistenceState = {
       state = {
         ...initialState,
         ...state,
+        presets: {
+          ...initialState.presets,
+          ...state.presets,
+        },
         ui: {
           ...initialState.ui,
           ...state.ui,
-          controls: {
-            ...initialState.ui.controls,
-            ...(state.ui?.controls || {}),
-          },
         },
       };
     }
@@ -74,12 +71,12 @@ export const persistenceState = {
 
   getSavedStates(): string[] {
     return Object.keys(localStorage)
-      .filter((key) => key.startsWith("enigma_state_"))
-      .map((key) => key.replace("enigma_state_", ""));
+      .filter((key) => key.startsWith("cipher_state_"))
+      .map((key) => key.replace("cipher_state_", ""));
   },
 
   deleteState(name: string): void {
-    localStorage.removeItem(`enigma_state_${name}`);
+    localStorage.removeItem(`cipher_state_${name}`);
   },
 
   // Export and import state to/from file
@@ -88,7 +85,7 @@ export const persistenceState = {
       const config: SavedConfiguration = {
         name,
         timestamp: Date.now(),
-        state: enigmaState.value,
+        state: cipherState.value,
       };
 
       const blob = new Blob([JSON.stringify(config, null, 2)], {
@@ -98,7 +95,7 @@ export const persistenceState = {
 
       const a = document.createElement("a");
       a.href = url;
-      a.download = `enigma-${name}.json`;
+      a.download = `cipher-${name}.json`;
       a.click();
 
       URL.revokeObjectURL(url);
@@ -108,38 +105,45 @@ export const persistenceState = {
   },
 
   importState(file: File): Promise<boolean> {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
+    return new Promise((resolve) => {
+      try {
+        const reader = new FileReader();
 
-      reader.onload = (e) => {
-        try {
-          const config: SavedConfiguration = JSON.parse(
-            e.target?.result as string,
-          );
+        reader.onload = (event) => {
+          try {
+            const config: SavedConfiguration = JSON.parse(
+              event.target?.result as string,
+            );
 
-          if (!config.state) {
-            reject(new Error("Invalid configuration file"));
-            return;
+            if (!config.state) {
+              console.error("Invalid configuration file");
+              resolve(false);
+              return;
+            }
+
+            const migratedState = this.migrateState(config.state);
+
+            updateState((state) => {
+              Object.assign(state, migratedState);
+            });
+
+            resolve(true);
+          } catch (error) {
+            console.error("Failed to parse state file:", error);
+            resolve(false);
           }
+        };
 
-          // Handle version migrations if needed
-          if (!config.state.version || config.state.version < STATE_VERSION) {
-            config.state = persistenceState.migrateState(config.state);
-          }
+        reader.onerror = () => {
+          console.error("Failed to read state file");
+          resolve(false);
+        };
 
-          enigmaState.value = config.state;
-          resolve(true);
-        } catch (error) {
-          console.error("Failed to import state:", error);
-          reject(error);
-        }
-      };
-
-      reader.onerror = () => {
-        reject(new Error("Failed to read file"));
-      };
-
-      reader.readAsText(file);
+        reader.readAsText(file);
+      } catch (error) {
+        console.error("Failed to import state:", error);
+        resolve(false);
+      }
     });
-  }
+  },
 };

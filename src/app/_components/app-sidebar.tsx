@@ -2,22 +2,22 @@
 
 import * as React from "react";
 import {
+  AudioWaveform,
   BookOpen,
   Bot,
   Command,
   Frame,
-  LifeBuoy,
+  GalleryVerticalEnd,
   Map,
   PieChart,
-  Send,
   Settings2,
   SquareTerminal,
 } from "lucide-react";
 
 import { NavMain } from "~/app/_components/nav-main";
 import { NavProjects } from "~/app/_components/nav-projects";
-import { NavSecondary } from "~/app/_components/nav-secondary";
 import { NavUser } from "~/app/_components/nav-user";
+import { TeamSwitcher } from "~/app/_components/team-switcher";
 import {
   Sidebar,
   SidebarContent,
@@ -26,14 +26,33 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarRail,
 } from "~/app/_components/ui/sidebar";
 
+// This is sample data.
 const data = {
   user: {
     name: "shadcn",
     email: "m@example.com",
     avatar: "/avatars/shadcn.jpg",
   },
+  teams: [
+    {
+      name: "Acme Inc",
+      logo: GalleryVerticalEnd,
+      plan: "Enterprise",
+    },
+    {
+      name: "Acme Corp.",
+      logo: AudioWaveform,
+      plan: "Startup",
+    },
+    {
+      name: "Evil Corp.",
+      logo: Command,
+      plan: "Free",
+    },
+  ],
   navMain: [
     {
       title: "Playground",
@@ -121,18 +140,6 @@ const data = {
       ],
     },
   ],
-  navSecondary: [
-    {
-      title: "Support",
-      url: "#",
-      icon: LifeBuoy,
-    },
-    {
-      title: "Feedback",
-      url: "#",
-      icon: Send,
-    },
-  ],
   projects: [
     {
       name: "Design Engineering",
@@ -154,8 +161,9 @@ const data = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
-    <Sidebar variant="inset" {...props}>
+    <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
+      {/* <TeamSwitcher teams={data.teams} /> */}
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
@@ -175,11 +183,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarContent>
         <NavMain items={data.navMain} />
         <NavProjects projects={data.projects} />
-        <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={data.user} />
       </SidebarFooter>
+      <SidebarRail />
     </Sidebar>
   );
 }

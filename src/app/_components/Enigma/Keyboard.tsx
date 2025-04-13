@@ -1,5 +1,4 @@
-import { KEYBOARD } from "~/lib/constants";
-import { setActiveLamp } from "../../../store/StateManager";
+import { setActiveLamp } from "~/store/StateManager";
 import { cn } from "~/lib/utils";
 import { Button } from "../ui/button";
 

@@ -1,12 +1,13 @@
 import { signal } from "@preact/signals-react";
-import type { EnigmaState } from "~/lib/types";
-import {  constants, STATE_VERSION } from "./constants";
+import type { CipherState, ModuleConfig } from "~/lib/types";
+import { constants, STATE_VERSION } from "./constants";
+import { v4 as uuidv4 } from "uuid";
 
 // Helper method to update state safely
-export function updateState(updater: (state: EnigmaState) => void): void {
-  const newState = { ...enigmaState.value };
+export function updateState(updater: (state: CipherState) => void): void {
+  const newState = { ...cipherState.value };
   updater(newState);
-  enigmaState.value = newState;
+  cipherState.value = newState;
 }
 
 // Create default plugboard mapping
@@ -18,16 +19,59 @@ export const createDefaultPlugboardMapping = (): Record<string, string> => {
   return mapping;
 };
 
-// Initial state
-export const initialState: EnigmaState = {
-  machine: {
+// Preset module configurations
+const enigmaPreset: ModuleConfig[] = [
+  {
+    id: uuidv4(),
+    type: "plugboard",
+    enabled: true,
+    mapping: createDefaultPlugboardMapping(),
+  },
+  {
+    id: uuidv4(),
+    type: "rotors",
+    enabled: true,
     rotorSettings: [
       { rotor: "I", ringSetting: 0 },
       { rotor: "II", ringSetting: 0 },
       { rotor: "III", ringSetting: 0 },
     ],
-    plugboardMapping: createDefaultPlugboardMapping(),
   },
+  {
+    id: uuidv4(),
+    type: "reflector",
+    enabled: true,
+    reflectorType: "standard",
+  },
+];
+
+const caesarPreset: ModuleConfig[] = [
+  {
+    id: uuidv4(),
+    type: "shifter",
+    enabled: true,
+    shift: 3,
+  },
+];
+
+const vigenerePreset: ModuleConfig[] = [
+  {
+    id: uuidv4(),
+    type: "vigenere",
+    enabled: true,
+    keyword: "KEY",
+  },
+];
+
+// Initial state with module chain approach
+export const initialState: CipherState = {
+  activePreset: "enigma",
+  presets: {
+    enigma: enigmaPreset,
+    caesar: caesarPreset,
+    vigenere: vigenerePreset,
+  },
+  moduleChain: [...enigmaPreset], // Start with Enigma preset
   messages: {
     input: "",
     output: "",
@@ -35,19 +79,9 @@ export const initialState: EnigmaState = {
   ui: {
     activeLamp: null,
     uiStyle: "modern",
-    controls: {
-      rotors: { show: true, active: true },
-      reflector: { show: true, active: true },
-      plugboard: { show: true, active: true },
-      lampboard: { show: true, active: true },
-      keyboard: { show: true, active: true },
-      input: { show: true, active: true },
-      output: { show: true, active: true },
-    },
   },
   version: STATE_VERSION,
 };
 
 // Main state container
-export const enigmaState = signal<EnigmaState>({ ...initialState });
-
+export const cipherState = signal<CipherState>({ ...initialState });
