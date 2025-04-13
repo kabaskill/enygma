@@ -2,7 +2,7 @@ import { ThemeToggle } from "./ThemeToggle";
 
 export default function Header() {
   return (
-    <header className="bg-input fixed top-0 z-50 w-full">
+    <header className="bg-background fixed top-0 z-50 w-full">
       <div className="container mx-auto flex max-w-6xl items-center justify-between">
         <h1 className="text-2xl font-extrabold tracking-tight ">
           e<span className="text-[hsl(280,100%,70%)]">N</span>ygma

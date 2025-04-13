@@ -3,13 +3,16 @@ import {
   plugboardMapping,
   connectPlugboardPair,
   disconnectPlugboardLetter,
+  constants,
 } from "~/store/StateManager";
 import ModuleWrapper from "./ModuleWrapper";
-import { ALPHABET } from "~/lib/constants";
 import { cn } from "~/lib/utils";
 
 export default function Plugboard() {
   const [selectedLetter, setSelectedLetter] = useState<string | null>(null);
+
+  // Get the alphabet from constants
+  const ALPHABET = constants.ALPHABET;
 
   function handleLetterClick(letter: string) {
     if (!selectedLetter) {
@@ -34,9 +37,9 @@ export default function Plugboard() {
       <div className="mb-2 flex flex-wrap justify-center gap-2 p-2">
         {(() => {
           const displayedLetters = new Set<string>();
-          const buttons = [];
+          const buttons: React.ReactNode[] = [];
 
-          ALPHABET.split("").forEach((letter) => {
+          ALPHABET.split("").forEach((letter: string) => {
             if (displayedLetters.has(letter)) return;
 
             const mapping = plugboardMapping.value;

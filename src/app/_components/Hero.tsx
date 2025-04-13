@@ -1,21 +1,24 @@
+"use client";
+
 import Link from "next/link";
 import { Button } from "./ui/button";
-import { Github, LogIn, LogOut } from "lucide-react";
-
+import { LogIn } from "lucide-react";
 import { cn } from "~/lib/utils";
-import { createClient } from "~/utils/supabase/server";
-import SignOutButton from "./SignOut";
+import { useAuth } from "./AuthContext";
+import SignOut from "./SignOut";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "./ui/dialog";
+import LoginForm from "./login-form";
+import { FaGithub } from "react-icons/fa";
 
-
-export default async function Hero() {
-  const supabase = await createClient();
-  const { data: { session } } = await supabase.auth.getSession()
-  
-  let verifiedUser = null;
-  if (session) {
-    const { data: { user } } = await supabase.auth.getUser();
-    verifiedUser = user;
-  }
+export default function Hero() {
+  const { user, loading } = useAuth();
 
   return (
     <>
@@ -34,59 +37,45 @@ export default async function Hero() {
             <p>messages</p>
           </div>
 
-          <div className="flex w-full max-w-xl flex-wrap items-center justify-around py-8 sm:flex-nowrap gap-4">
+          <div className="flex w-full max-w-xl flex-wrap items-center justify-around gap-4 py-8 sm:flex-nowrap">
             <Link
               href="https://github.com/kabaskill/enygma"
               className="inline-flex items-center gap-2"
             >
               <Button size="lg" variant="outline">
-                <Github className="h-4 w-4" />
-                <span>GitHub Repository</span>
+                <FaGithub className="h-4 w-4" />
+                GitHub Repository
               </Button>
             </Link>
             <Link
-              href="https://github.com/kabaskill/enygma"
+              href="/modern"
               className="inline-flex items-center gap-2"
             >
-              <Button size="lg">
-                <span>Get Started</span>
-              </Button>
+              <Button size="lg">Get Started</Button>
             </Link>
           </div>
 
           {/* AUTH SECTION */}
-          <div className="flex flex-col items-center justify-center gap-4">
-            {verifiedUser ? (
-              <div className="flex flex-col items-center gap-2 text-center">
-                <p>
-                  Logged in as{" "}
-                  <span className="font-medium">{verifiedUser.email}</span>
-                </p>
-                <Button
-                  asChild
-                  variant="outline"
-                  size="sm"
-                  className="border-zinc-700 hover:bg-zinc-800"
-                >
-                  <Link href="/api/auth/signout">
-                    <LogOut className="mr-2 h-4 w-4" /> Sign out
-                  </Link>
-                </Button>
 
-                <SignOutButton/>
-              </div>
-            ) : (
-              <Button
-                asChild
-                variant="outline"
-                className="border-zinc-700 hover:bg-zinc-800"
-              >
-                <Link href="/login">
-                  <LogIn className="mr-2 h-4 w-4" /> Sign in
-                </Link>
-              </Button>
-            )}
+          <div>
+            <p>
+              {loading ? "Loading..." : user ? "Logged in" : "Not logged in"}
+            </p>
+            <SignOut />
           </div>
+
+          <Dialog>
+            <DialogTrigger>Open</DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Welcome back!</DialogTitle>
+                <DialogDescription>
+                  Login with your Apple or Google account
+                </DialogDescription>
+              </DialogHeader>
+              <LoginForm />
+            </DialogContent>
+          </Dialog>
         </div>
       </section>
     </>

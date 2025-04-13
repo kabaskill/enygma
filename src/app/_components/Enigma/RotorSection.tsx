@@ -1,4 +1,8 @@
-import { rotorSettings, addRotor, getAvailableRotors } from "~/store/StateManager"; //prettier-ignore
+import {
+  rotorSettings,
+  addRotor,
+  getAvailableRotors,
+} from "~/store/StateManager";
 import ModuleWrapper from "./ModuleWrapper";
 import Rotor from "./Rotor";
 import { Button } from "../ui/button";
