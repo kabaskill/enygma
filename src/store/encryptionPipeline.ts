@@ -9,7 +9,7 @@ import { VigenereProcessor } from "./processors/vigenere";
 import { TranspositionProcessor } from "./processors/transpose";
 
 export class EncryptionPipeline {
-  private processors: Record<string, ModuleProcessor> = {};
+  processors: Record<string, ModuleProcessor> = {};
   private processingHistory: ProcessingContext[] = [];
 
   constructor() {
@@ -36,6 +36,14 @@ export class EncryptionPipeline {
   ): { result: string; history: ProcessingContext[] } {
     let currentChar = char;
     const history: ProcessingContext[] = [];
+
+    // Reset stateful processors if this is the first character
+    if (position === 0) {
+      this.resetAllProcessors();
+
+      // Initialize processors with current module configs
+      this.initializeProcessorStates(modules);
+    }
 
     // Process through each enabled module
     for (const module of modules) {
@@ -68,11 +76,6 @@ export class EncryptionPipeline {
 
       // Update current char for next module
       currentChar = outputChar;
-
-      // Update state for stateful processors (like rotors)
-      if (processor.updateState) {
-        processor.updateState(module.id, module);
-      }
     }
 
     return { result: currentChar, history };
@@ -90,11 +93,12 @@ export class EncryptionPipeline {
     this.processingHistory = [];
 
     // Reset all processor states
-    Object.values(this.processors).forEach((processor) => {
-      if (processor.reset) processor.reset();
-    });
+    this.resetAllProcessors();
 
-    // Process each character
+    // Initialize all processor states with current modules
+    this.initializeProcessorStates(modules);
+
+    // Process each character individually to ensure proper rotor stepping
     for (let i = 0; i < message.length; i++) {
       const { result, history } = this.processChar(
         message[i],
@@ -102,11 +106,11 @@ export class EncryptionPipeline {
         modules,
         characterSet,
       );
+
       if (result) {
-        // For transposition, some calls might not return a character yet
         output += result;
+        this.processingHistory.push(...history);
       }
-      this.processingHistory.push(...history);
     }
 
     // Handle any remaining buffered characters in stateful processors
@@ -115,11 +119,33 @@ export class EncryptionPipeline {
       .transposition as TranspositionProcessor;
     if (transProcessor && transProcessor.getState) {
       const state = transProcessor.getState();
-      // Process any remaining buffered characters
-      // Implementation depends on specific needs
+      // Process any remaining buffered characters if needed
     }
 
     return { output, processingHistory: this.processingHistory };
+  }
+
+  /**
+   * Reset all processors to their initial state
+   */
+  resetAllProcessors(): void {
+    Object.values(this.processors).forEach((processor) => {
+      if (processor.reset) {
+        processor.reset();
+      }
+    });
+  }
+
+  /**
+   * Initialize all processor states with current module configurations
+   */
+  initializeProcessorStates(modules: ModuleConfig[]): void {
+    for (const module of modules) {
+      const processor = this.processors[module.type];
+      if (processor && processor.updateState) {
+        processor.updateState(module.id, module);
+      }
+    }
   }
 
   /**
@@ -137,14 +163,13 @@ export class EncryptionPipeline {
   }
 
   /**
- * Initialize modules with default values for presets
- */
-initializePresetModules(modules: ModuleConfig[]): ModuleConfig[] {
-  return modules.map(module => {
-    return this.initializeModule(module);
-  });
-}
-
+   * Initialize modules with default values for presets
+   */
+  initializePresetModules(modules: ModuleConfig[]): ModuleConfig[] {
+    return modules.map((module) => {
+      return this.initializeModule(module);
+    });
+  }
 
   /**
    * Initialize default configurations for newly added modules

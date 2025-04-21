@@ -1,7 +1,7 @@
-import { create } from 'zustand';
-import type { MessageState, ProcessingContext } from './types';
-import { encryptionPipeline } from './encryptionPipeline';
-import { useModuleStore } from './moduleStore';
+import { create } from "zustand";
+import type { MessageState, ProcessingContext } from "./types";
+import { encryptionPipeline } from "./encryptionPipeline";
+import { useModuleStore } from "./moduleStore";
 
 interface MessageStoreState extends MessageState {
   setText: (text: string) => void;
@@ -21,7 +21,7 @@ export const useMessageStore = create<MessageStoreState>((set, get) => ({
   activeModuleId: null,
   activeLamp: null,
   processingHistory: [],
-  
+
   setText: (text) => {
     set({ input: text });
     // Process text immediately
@@ -31,38 +31,60 @@ export const useMessageStore = create<MessageStoreState>((set, get) => ({
       set({ output: "", processingHistory: [] });
     }
   },
-  
+
   processText: () => {
     const { input } = get();
     const { modules, characterSet } = useModuleStore.getState();
-    
-    const { output, processingHistory } = encryptionPipeline.processMessage(
-      input,
-      modules,
-      characterSet
-    );
-    
-    set({ output, processingHistory });
+
+    // Reset processors to ensure fresh state for new processing
+    useModuleStore.getState().resetProcessors();
+
+    // Process each character individually to ensure proper rotor stepping
+    let output = "";
+    const allHistory: ProcessingContext[] = [];
+
+    for (let i = 0; i < input.length; i++) {
+      const char = input[i];
+      const { result: processedChar, history } = encryptionPipeline.processChar(
+        char,
+        i,
+        modules,
+        characterSet,
+      );
+
+      output += processedChar;
+      allHistory.push(...history);
+    }
+
+    set({
+      output,
+      processingHistory: allHistory,
+    });
   },
-  
+
   // Function to process a single character - useful for interactive components
   processChar: (char, position) => {
     const { modules, characterSet } = useModuleStore.getState();
-    const { result } = encryptionPipeline.processChar(char, position, modules, characterSet);
-    
+    const { result } = encryptionPipeline.processChar(
+      char,
+      position,
+      modules,
+      characterSet,
+    );
+
     // Set the active lamp for visualization
     set({ activeLamp: result });
-    
+
     return result;
   },
-  
+
   setActiveModuleId: (id) => set({ activeModuleId: id }),
-  
+
   setActiveLamp: (char) => set({ activeLamp: char }),
-  
+
   setTitle: (title) => set({ title }),
-  
+
   getModuleHistory: (moduleId: string) => {
-    return get().processingHistory.filter(ctx => ctx.moduleId === moduleId);
-  }
+    return get().processingHistory.filter((ctx) => ctx.moduleId === moduleId);
+  },
 }));
