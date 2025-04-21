@@ -15,6 +15,7 @@ import {
 import { Label } from "~/app/_components/ui/label";
 import { Button } from "~/app/_components/ui/button";
 import { PlusCircle } from "lucide-react";
+import Link from "next/link";
 
 export default function EnigmaPage() {
   const { modules, addModule, characterSet, setCharacterSet } =
@@ -89,6 +90,11 @@ export default function EnigmaPage() {
   return (
     <div className="flex flex-1 flex-col gap-4 overflow-auto p-4 pt-0">
       {/* Top Controls Section */}
+
+      <Link href="/" className="bg-accent-foreground text-primary text-2xl font-bold">
+        BACK
+      </Link>
+
       <div className="bg-card rounded-lg border p-4">
         <div className="flex flex-col gap-4 md:flex-row md:items-end">
           {/* Preset Selection */}

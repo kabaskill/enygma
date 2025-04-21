@@ -1,4 +1,4 @@
-import { useModuleStore, useMessageStore } from "~/store";
+import { useModuleStore, useMessageStore, encryptionPipeline } from "~/store";
 import type { RotorModuleConfig, RotorSetting, Rotor } from "~/store/types";
 import { Button } from "~/app/_components/ui/button";
 import {
@@ -8,13 +8,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/app/_components/ui/select";
-import { Input } from "~/app/_components/ui/input";
 import { Label } from "~/app/_components/ui/label";
 import { Plus, Minus, RotateCcw, ArrowLeft, ArrowRight } from "lucide-react";
-import React, { useEffect } from "react";
 import { getAlphabetForCharSet } from "~/store/processors/base";
 import { Card, CardContent } from "~/app/_components/ui/card";
-import { encryptionPipeline } from "~/store";
 
 interface RotorSectionProps {
   moduleId: string;
@@ -24,39 +21,15 @@ interface RotorSectionProps {
 const ALL_ROTORS: Rotor[] = ["I", "II", "III", "IV", "V"];
 
 export default function RotorSection({ moduleId }: RotorSectionProps) {
-  // Get module configuration from module store
-  const module = useModuleStore((state) =>
-    state.modules.find((m) => m.id === moduleId && m.type === "rotors"),
-  ) as RotorModuleConfig | undefined;
+  // Get the module data and store functions directly from zustand
+  const { modules, updateModule, resetProcessors, characterSet } =
+    useModuleStore();
+  const { processText } = useMessageStore();
 
-  // Get module store functions
-  const { updateModule, resetProcessors } = useModuleStore();
-
-  // Get the character set from the global store
-  const characterSet = useModuleStore((state) => state.characterSet);
-
-  // Force a re-render when message is processed (to update rotor positions)
-  useMessageStore((state) => state.output);
-
-  // Get the alphabet length based on the character set
-  const alphabetLength = getAlphabetForCharSet(characterSet).length;
-
-  // This single useEffect ensures proper initialization when the component mounts
-  useEffect(() => {
-    if (!module) return;
-
-    // On initial mount, ensure rotors are properly initialized with their settings
-    const rotorProcessor = encryptionPipeline.processors.rotors;
-    if (rotorProcessor?.updateState) {
-      rotorProcessor.updateState(moduleId, module);
-    }
-
-    // Process any existing text to ensure rotor positions are correct
-    const messageState = useMessageStore.getState();
-    if (messageState.input) {
-      messageState.processText();
-    }
-  }, [moduleId]);
+  // Find the rotor module
+  const module = modules.find(
+    (m) => m.id === moduleId && m.type === "rotors",
+  ) as RotorModuleConfig ;
 
   if (!module || module.type !== "rotors") {
     return (
@@ -66,19 +39,20 @@ export default function RotorSection({ moduleId }: RotorSectionProps) {
     );
   }
 
+  // Get the alphabet length based on the character set
+  const alphabetLength = getAlphabetForCharSet(characterSet).length;
+
+  // Get the latest positions directly from processor
+  const rotorState = encryptionPipeline.processors.rotors.getState();
+  const rotorPositions = rotorState.positions || {};
+
   // Get available rotors for selection (those not already selected)
   const availableRotors = ALL_ROTORS.filter(
     (rotor) => !module.rotorSettings.map((s) => s.rotor).includes(rotor),
   );
 
-  // Get current rotor positions directly from the processor
-  const rotorPositions = getRotorPositions(moduleId, module);
-
-  // Update rotor settings and process text
-  const updateRotorSetting = (
-    index: number,
-    updates: Partial<RotorSetting>,
-  ) => {
+  // Update a rotor setting and process text
+  function updateRotorSetting(index: number, updates: Partial<RotorSetting>) {
     const newSettings = [...module.rotorSettings];
     newSettings[index] = { ...newSettings[index], ...updates };
 
@@ -86,31 +60,82 @@ export default function RotorSection({ moduleId }: RotorSectionProps) {
       rotorSettings: newSettings,
     } as Partial<RotorModuleConfig>);
 
-    // Directly update processor state
+    // Update processor state if needed
     const rotorProcessor = encryptionPipeline.processors.rotors;
-    if (rotorProcessor?.updateState) {
+    if (rotorProcessor.updateState) {
       rotorProcessor.updateState(moduleId, {
         ...module,
         rotorSettings: newSettings,
       });
     }
 
-    // Process text if there is any
-    const messageState = useMessageStore.getState();
-    if (messageState.input) {
-      messageState.processText();
+    processText();
+  }
+
+  // Manual step a rotor
+  function stepRotor(index: number, steps: number) {
+    // Get current position from processor state
+    const rotorKey = `${moduleId}-${index}`;
+    const currentPosition =
+      rotorPositions[rotorKey] || module.rotorSettings[index].ringSetting || 0;
+
+    // Calculate new position
+    const newPosition =
+      (currentPosition + steps + alphabetLength) % alphabetLength;
+
+    // Update the module config
+    const newSettings = [...module.rotorSettings];
+    newSettings[index] = { ...newSettings[index], ringSetting: newPosition };
+    updateModule(moduleId, {
+      rotorSettings: newSettings,
+    } as Partial<RotorModuleConfig>);
+
+    // Update the processor state
+    const rotorProcessor = encryptionPipeline.processors.rotors;
+    if (rotorProcessor.updateState) {
+      rotorProcessor.updateState(moduleId, {
+        ...module,
+        rotorSettings: newSettings,
+      });
     }
-  };
+
+    // Process the text to see the update
+    processText();
+  }
+
+  // Reset all rotors to position 0
+  function resetRotors() {
+    // Update all rotor settings to 0
+    const newSettings = module.rotorSettings.map((setting) => ({
+      ...setting,
+      ringSetting: 0,
+    }));
+
+    // Update module config
+    updateModule(moduleId, {
+      rotorSettings: newSettings,
+    } as Partial<RotorModuleConfig>);
+
+    // Reset processors
+    resetProcessors();
+
+    // Process text
+    processText();
+  }
 
   return (
     <div className="space-y-4">
       <h3 className="text-sm font-medium">Rotor Configuration</h3>
+
       {/* Rotor Configuration */}
       <div className="flex items-center gap-2 overflow-x-auto">
         {module.rotorSettings.map((rotorSetting, index) => {
-          // Get position for this rotor
+          // Get position from processor state if available
           const rotorKey = `${moduleId}-${index}`;
-          const position = rotorPositions[rotorKey] || 0;
+          const position =
+            rotorPositions[rotorKey] !== undefined
+              ? rotorPositions[rotorKey]
+              : rotorSetting.ringSetting || 0;
 
           return (
             <Card key={index} className="overflow-hidden">
@@ -127,12 +152,7 @@ export default function RotorSection({ moduleId }: RotorSectionProps) {
                       variant="outline"
                       size="icon"
                       className="h-7 w-7"
-                      onClick={() => {
-                        // Manual step backward
-                        const newPos =
-                          (position - 1 + alphabetLength) % alphabetLength;
-                        updateRotorSetting(index, { ringSetting: newPos });
-                      }}
+                      onClick={() => stepRotor(index, -1)}
                     >
                       <ArrowLeft className="h-3 w-3" />
                     </Button>
@@ -145,11 +165,7 @@ export default function RotorSection({ moduleId }: RotorSectionProps) {
                       variant="outline"
                       size="icon"
                       className="h-7 w-7"
-                      onClick={() => {
-                        // Manual step forward
-                        const newPos = (position + 1) % alphabetLength;
-                        updateRotorSetting(index, { ringSetting: newPos });
-                      }}
+                      onClick={() => stepRotor(index, 1)}
                     >
                       <ArrowRight className="h-3 w-3" />
                     </Button>
@@ -218,6 +234,7 @@ export default function RotorSection({ moduleId }: RotorSectionProps) {
               updateModule(moduleId, {
                 rotorSettings: newSettings,
               } as Partial<RotorModuleConfig>);
+              processText();
             }
           }}
           disabled={
@@ -237,6 +254,7 @@ export default function RotorSection({ moduleId }: RotorSectionProps) {
               updateModule(moduleId, {
                 rotorSettings: newSettings,
               } as Partial<RotorModuleConfig>);
+              processText();
             }}
             className="text-destructive flex items-center"
           >
@@ -247,24 +265,7 @@ export default function RotorSection({ moduleId }: RotorSectionProps) {
         <Button
           variant="outline"
           size="sm"
-          onClick={() => {
-            // Reset all rotors to their initial positions
-            const newSettings = module.rotorSettings.map((setting) => ({
-              ...setting,
-              ringSetting: 0,
-            }));
-            updateModule(moduleId, {
-              rotorSettings: newSettings,
-            } as Partial<RotorModuleConfig>);
-
-            // Reset processors and reprocess text
-            resetProcessors();
-
-            const messageState = useMessageStore.getState();
-            if (messageState.input) {
-              messageState.processText();
-            }
-          }}
+          onClick={resetRotors}
           className="ml-auto flex items-center"
         >
           <RotateCcw className="mr-1 h-4 w-4" /> Reset
@@ -272,33 +273,4 @@ export default function RotorSection({ moduleId }: RotorSectionProps) {
       </div>
     </div>
   );
-}
-
-// Helper function to get rotor positions from processor state
-function getRotorPositions(
-  moduleId: string,
-  module: RotorModuleConfig,
-): Record<string, number> {
-  const positions: Record<string, number> = {};
-
-  // Initialize with default ring settings
-  module.rotorSettings.forEach((setting, idx) => {
-    positions[`${moduleId}-${idx}`] = setting.ringSetting || 0;
-  });
-
-  // Get the latest processor state
-  const rotorProcessor = encryptionPipeline.processors.rotors;
-  if (rotorProcessor?.getState) {
-    const processorState = rotorProcessor.getState();
-    if (processorState.positions) {
-      // Update positions from processor state
-      Object.keys(processorState.positions).forEach((key) => {
-        if (key.startsWith(moduleId)) {
-          positions[key] = processorState.positions[key];
-        }
-      });
-    }
-  }
-
-  return positions;
 }

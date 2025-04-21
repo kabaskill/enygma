@@ -48,7 +48,7 @@ export default function Hero() {
               </Button>
             </Link>
             <Link
-              href="/modern"
+              href="/enigma"
               className="inline-flex items-center gap-2"
             >
               <Button size="lg">Get Started</Button>

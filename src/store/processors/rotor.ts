@@ -9,7 +9,7 @@ import type { RotorModuleConfig, ModuleConfig, Rotor } from "../types";
 
 interface RotorState {
   positions: Record<string, number>;
-  lastProcessedCharSet: string; // Track last used character set
+  lastProcessedCharSet: string;
 }
 
 // Pre-defined historical rotor wirings
@@ -39,13 +39,9 @@ export class RotorProcessor implements ModuleProcessor {
     const currentCharSet = context.characterSet || "uppercase";
     const alphabet = getAlphabetForCharSet(currentCharSet);
 
-    // Check if character set has changed since last processing
+    // Check if character set has changed
     if (currentCharSet !== this.state.lastProcessedCharSet) {
-      // Update the tracked character set
       this.state.lastProcessedCharSet = currentCharSet;
-
-      // Reinitialize positions if character set changed to maintain proper behavior
-      this.updateState(config.id, config);
     }
 
     // Skip non-alphabet characters
@@ -54,17 +50,18 @@ export class RotorProcessor implements ModuleProcessor {
     // Get the original case to preserve it
     const upperChar = char.toUpperCase();
 
-    // Initialize positions for this module if not set
-    if (!this.state.positions[`${config.id}-0`]) {
-      // For each rotor in the configuration, initialize position
-      rotorConfig.rotorSettings.forEach((setting, idx) => {
-        const key = `${config.id}-${idx}`;
+    // Initialize rotor positions if needed
+    rotorConfig.rotorSettings.forEach((setting, idx) => {
+      const key = `${config.id}-${idx}`;
+      if (this.state.positions[key] === undefined) {
         this.state.positions[key] = setting.ringSetting || 0;
-      });
-    }
+      }
+    });
 
-    // Step the rotors BEFORE processing the character
-    this.stepRotors(config.id, rotorConfig, alphabet.length);
+    // Step the rotors if this is a new character (not just changing settings)
+    if (context.position !== undefined) {
+      this.stepRotors(config.id, rotorConfig, alphabet.length);
+    }
 
     let result = upperChar;
 
@@ -84,8 +81,6 @@ export class RotorProcessor implements ModuleProcessor {
       const wiringPos = (charPos + rotorPos) % alphabet.length;
       if (wiringPos >= 0 && wiringPos < wiring.length) {
         // For extended character sets, we need to map between alphabet index and rotor wiring
-        // The rotor wiring is defined for the standard 26-letter alphabet
-        // We need to map between the current alphabet's index and the standard alphabet
         const standardAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         const wireLetter = wiring.charAt(wiringPos % 26);
         const wireIndex = standardAlphabet.indexOf(wireLetter);
@@ -112,53 +107,43 @@ export class RotorProcessor implements ModuleProcessor {
     return preserveCase(char, result);
   }
 
-  // Improved stepping function with proper cascading across rotors
+  // Step the rotors with proper cascade behavior
   private stepRotors(
     moduleId: string,
     config: RotorModuleConfig,
     alphabetLength: number,
   ): void {
-    if (config.rotorSettings.length === 0) return;
+    const rotorCount = config.rotorSettings.length;
+    if (rotorCount === 0) return;
 
-    // First, determine which rotors need to step in this iteration
-    const shouldStep: boolean[] = Array(config.rotorSettings.length).fill(
-      false,
-    );
+    // Step the rightmost rotor first (always steps)
+    const rightmostKey = `${moduleId}-${rotorCount - 1}`;
+    let shouldCascade =
+      this.state.positions[rightmostKey] === alphabetLength - 1;
+    this.state.positions[rightmostKey] =
+      (this.state.positions[rightmostKey] + 1) % alphabetLength;
 
-    // The rightmost (fastest) rotor always steps
-    const lastIndex = config.rotorSettings.length - 1;
-    shouldStep[lastIndex] = true;
+    // Step any additional rotors if they need to cascade
+    for (let i = rotorCount - 2; i >= 0; i--) {
+      const key = `${moduleId}-${i}`;
 
-    // Check if middle and left rotors should step based on turnover positions
-    for (let i = lastIndex; i > 0; i--) {
-      const rotorKey = `${moduleId}-${i}`;
-      const currentPos = this.state.positions[rotorKey] || 0;
-
-      // If this rotor is at the turnover position, the rotor to its left should step
-      if ((currentPos + 1) % alphabetLength === 0) {
-        shouldStep[i - 1] = true;
-      }
-    }
-
-    // Now step all rotors that should move
-    for (let i = 0; i < config.rotorSettings.length; i++) {
-      if (shouldStep[i]) {
-        const rotorKey = `${moduleId}-${i}`;
-        const currentPos = this.state.positions[rotorKey] || 0;
-        this.state.positions[rotorKey] = (currentPos + 1) % alphabetLength;
+      if (shouldCascade) {
+        shouldCascade = this.state.positions[key] === alphabetLength - 1;
+        this.state.positions[key] =
+          (this.state.positions[key] + 1) % alphabetLength;
+      } else {
+        break;
       }
     }
   }
 
-  // This is used for manual stepping and initialization
+  // Used for manual stepping and initialization
   updateState(moduleId: string, config: ModuleConfig): boolean {
     if (config.type !== "rotors") return false;
 
     const rotorConfig = config as RotorModuleConfig;
-    const characterSet = this.state.lastProcessedCharSet; // Use tracked character set
-    const alphabet = getAlphabetForCharSet(characterSet);
 
-    // Initialize rotor positions from config
+    // Set positions directly from config
     rotorConfig.rotorSettings.forEach((setting, idx) => {
       const key = `${moduleId}-${idx}`;
       this.state.positions[key] = setting.ringSetting || 0;
