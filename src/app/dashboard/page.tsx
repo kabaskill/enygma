@@ -14,16 +14,13 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "~/app/_components/ui/sidebar";
-import RotorSection from "../_components/Enigma/RotorSection";
-import Plugboard from "../_components/Enigma/Plugboard";
-import Lampboard from "../_components/Enigma/Lampboard";
-import ModuleWrapper from "../_components/Enigma/ModuleWrapper";
+import { RotorSection } from "../_components/Modules/Enigma/RotorSection";
+import { Plugboard } from "../_components/Modules/Enigma/Plugboard";
+import { Lampboard } from "../_components/Modules/Enigma/Lampboard";
+import { ModuleWrapper } from "../_components/Modules/ModuleWrapper";
 import SlateEditor from "../_components/Editor/SlateEditor";
-import { useSignals } from "@preact/signals-react/runtime";
 
 export default function Dashboard() {
-  useSignals();
-
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -54,13 +51,13 @@ export default function Dashboard() {
         <div className="flex flex-1 flex-col gap-4 overflow-auto p-4 pt-0">
           <div className="grid auto-rows-min gap-4 md:grid-cols-3">
             <div className="bg-muted/50 aspect-video rounded-xl">
-              <RotorSection />
+              These should be modules
             </div>
             <div className="bg-muted/50 aspect-video rounded-xl">
-              <Plugboard />
+              These should be modules
             </div>
             <div className="bg-muted/50 aspect-video rounded-xl">
-              <Lampboard />
+              These should be modules
             </div>
           </div>
 

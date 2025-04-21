@@ -31,7 +31,7 @@ export default function Home() {
 
         {/* Demo Section */}
         <section className="container mx-auto flex min-h-screen w-full flex-col items-center justify-center">
-          <Demo />
+          {/* <Demo /> */}
         </section>
 
         {/* About Section */}

@@ -1,5 +1,10 @@
+// Core constants for the application
+
+export const STATE_VERSION = 1;
+
 export const constants = {
   ALPHABET: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+  LOWERCASE: "abcdefghijklmnopqrstuvwxyz",
   KEYBOARD: {
     row1: "QWERTZUIO",
     row2: "ASDFGHJK",
@@ -33,4 +38,11 @@ export const constants = {
   },
 };
 
-export const STATE_VERSION = 1;
+// Utility function to create default mapping (each letter maps to itself)
+export const createDefaultAlphabetMapping = (): Record<string, string> => {
+  const mapping: Record<string, string> = {};
+  constants.ALPHABET.split("").forEach((letter) => {
+    mapping[letter] = letter;
+  });
+  return mapping;
+};

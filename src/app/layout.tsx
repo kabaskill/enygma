@@ -1,43 +1,30 @@
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
 import "~/styles/globals.css";
 
-import { type Metadata } from "next";
-import { Courier_Prime } from "next/font/google";
-import { Geist } from "next/font/google";
-import { ThemeProvider } from "./_components/Providers";
-import { AuthProvider } from "./_components/AuthContext";
+import { Providers } from "./_components/Providers";
+
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "eNygma",
-  description: "Note taking with a twist",
-  icons: [{ rel: "icon", url: "/favicon.ico" }],
+  title: "Enigma - Interactive Cryptography Tool",
+  description:
+    "Interactive cryptography tool featuring Enigma machine simulation",
 };
-
-const geist = Geist({
-  subsets: ["latin"],
-  variable: "--font-geist",
-});
 
 export default function RootLayout({
   children,
-}: Readonly<{ children: React.ReactNode }>) {
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <html lang="en" className={`${geist.variable}`} suppressHydrationWarning>
-      <body>
-        <AuthProvider>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="dracula"
-            enableSystem={false}
-            value={{
-              light: "light",
-              dark: "dark",
-              dracula: "dracula",
-            }}
-            disableTransitionOnChange
-          >
-            {children}
-          </ThemeProvider>
-        </AuthProvider>
+    <html lang="en" suppressHydrationWarning>
+      <body className={inter.className}>
+        <Providers>
+          <div className="flex min-h-screen flex-col">
+            <main className="flex-1">{children}</main>
+          </div>
+        </Providers>
       </body>
     </html>
   );
