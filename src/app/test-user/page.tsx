@@ -14,10 +14,9 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "~/app/_components/ui/sidebar";
-import  ModuleWrapper  from "../_components/Modules/ModuleWrapper";
 import SlateEditor from "../_components/Editor/SlateEditor";
 
-export default function Dashboard() {
+export default function TestUser() {
   return (
     <SidebarProvider>
       <AppSidebar />

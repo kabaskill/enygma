@@ -265,7 +265,7 @@ export default function EnigmaPage() {
                 <p>No modules are configured. Add modules from the sidebar.</p>
               </div>
             ) : (
-              <div className="space-y-4">
+              <div className="grid grid-cols-3 gap-4">
                 {modules.map((module) => (
                   <ModuleWrapper key={module.id} module={module}>
                     {renderModuleContent(module)}

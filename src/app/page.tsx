@@ -8,7 +8,6 @@ import Hero from "./_components/Hero";
 import LetterGlitch from "./_components/LetterGlitch";
 
 export default function Home() {
-
   return (
     <>
       <div className="pointer-events-none fixed top-0 left-0 -z-10 h-full w-full opacity-20">
@@ -23,7 +22,7 @@ export default function Home() {
 
       <Header />
 
-      <main >
+      <main>
         {/* Hero Section */}
         <section className="container mx-auto flex min-h-screen w-full flex-col items-center justify-center">
           <Hero />
@@ -36,19 +35,17 @@ export default function Home() {
 
         {/* About Section */}
         <section className="container mx-auto flex min-h-screen w-full flex-col items-center justify-between">
-         
-            <Card className="w-full ">
-              <CardHeader>
-                <CardTitle>About</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground text-sm">
-                  This is a demo application showcasing the use of Next.js,
-                  Tailwind CSS, and Radix UI.
-                </p>
-              </CardContent>
-            </Card>
-  
+          <Card className="w-full">
+            <CardHeader>
+              <CardTitle>About</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground text-sm">
+                This is a demo application showcasing the use of Next.js,
+                Tailwind CSS, and Radix UI.
+              </p>
+            </CardContent>
+          </Card>
 
           <Footer />
         </section>
